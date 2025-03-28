@@ -1,9 +1,12 @@
+![image](https://github.com/user-attachments/assets/c936217a-6b39-41e8-bf7d-f3433b6c36b5)
+
+                                       
+
 # *data-analyst-zunera*
 Descriptive Analysis of Parks, Recreation, and Pets in Vancouver
 
-## *Project Title*
-
-Understanding Parks, Recreation, and Pet Facilities in Vancouver
+## *Project Theme Title*
+Parks, Recreation, and Pet Facilities in Vancouver
 
 ## *Objective*
 
