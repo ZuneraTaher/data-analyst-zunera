@@ -1,60 +1,154 @@
-# data-analyst-zunera
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+# *data-analyst-zunera*
+Descriptive Analysis of Parks, Recreation, and Pets in Vancouver
 
-# Load the dataset
-data = pd.read_csv("parks_dataset.csv", skip_blank_lines=True)
+*Project Title*
 
-# Preview the dataset
-print("Original Data:")
-print(data.head())
+Understanding Parks, Recreation, and Pet Facilities in Vancouver
 
-# Clean the data
-# Drop unnecessary columns like 'Column1' and malformed 'Geom'
-data = data.drop(columns=["Column1", "Geom"], errors="ignore")
+*Objective*
 
-# Handle missing values (drop rows with missing PARK_NAME or AREA_HA)
-cleaned_data = data.dropna(subset=["PARK_NAME", "AREA_HA"])
+The primary goal of this project is to conduct a descriptive analysis of parks, recreation, and pet facilities in the City of Vancouver. This analysis aims to:
 
-# Convert AREA_HA to numeric (in case of unexpected characters)
-cleaned_data["AREA_HA"] = pd.to_numeric(cleaned_data["AREA_HA"], errors="coerce")
+Summarize key characteristics of park usage.
 
-# Drop rows with invalid AREA_HA (e.g., NaN values after conversion)
-cleaned_data = cleaned_data.dropna(subset=["AREA_HA"])
+Identify trends in recreational facility access.
 
-# Basic Statistics
-print("\nDescriptive Statistics for Park Sizes:")
-print(cleaned_data["AREA_HA"].describe())
+Generate insights that can inform city planning and public service improvements.
 
-# Largest and Smallest Parks
-largest_park = cleaned_data.loc[cleaned_data["AREA_HA"].idxmax()]
-smallest_park = cleaned_data.loc[cleaned_data["AREA_HA"].idxmin()]
-print("\nLargest Park:")
-print(largest_park)
-print("\nSmallest Park:")
-print(smallest_park)
+*Dataset*
 
-# Categorize parks into size groups
-size_bins = [0, 1, 10, 50, 500]  # Define size categories
-size_labels = ["Small", "Medium", "Large", "Very Large"]
-cleaned_data["Size_Category"] = pd.cut(cleaned_data["AREA_HA"], bins=size_bins, labels=size_labels, include_lowest=True)
+The dataset includes polygon representation data of parks and recreational areas in Vancouver, containing the following key features:
 
-# Count parks in each size category
-size_counts = cleaned_data["Size_Category"].value_counts()
+PARK_ID: Unique identifier for each park.
 
-# Visualization: Park Size Distribution
-plt.figure(figsize=(10, 6))
-sns.histplot(cleaned_data["AREA_HA"], bins=30, kde=True, color='blue')
-plt.title("Distribution of Park Sizes")
-plt.xlabel("Area (ha)")
-plt.ylabel("Frequency")
-plt.show()
+PARK_NAME: Name of the park.
 
-# Bar plot for size categories
-plt.figure(figsize=(8, 5))
-sns.barplot(x=size_counts.index, y=size_counts.values, palette="viridis")
-plt.title("Park Size Categories")
-plt.xlabel("Category")
-plt.ylabel("Count")
-plt.show()
+AREA_HA: Area of the park in hectares.
+
+PARK_URL: URL for more information about the park.
+
+Geom: Geometric representation of the park's boundaries (polygon data).
+
+geo_point_2d: Geographic coordinates of the park (latitude and longitude).
+
+*Data Source*
+
+The dataset is sourced from the City of Vancouver's open data portal, which provides access to various datasets related to city planning and public services.
+
+1. Methodology
+
+Using services such as Amazon S3, AWS Glue, Glue DataBrew, and AWS Athena, the project implements a complete ETL (Extract, Transform, Load) workflow—from data ingestion and transformation to storage and analysis.
+
+Data Ingestion:
+
+The dataset is ingested into an Amazon S3 bucket named *cityofvancouver-raw-zun*, where it is organized into subfolders for raw and transformed data. This setup facilitates efficient data management and retrieval.
+
+Data Cleaning and Transformation:
+
+AWS Glue is utilized to automate the data cleaning process. This includes identifying and handling missing values, correcting data types, and removing duplicates.
+AWS Glue DataBrew provides a visual interface for data preparation, allowing for easy transformation of the dataset without the need for extensive coding. Data profiling is conducted to assess data quality and consistency.
+
+Data Storage:
+
+Once the dataset is cleaned and processed, it is stored in a structured format within the S3 bucket. Advanced cloud functionalities such as KMS-based encryption are configured to ensure the confidentiality and integrity of the data. This involves creating a key in AWS Key Management Service (KMS) to encrypt sensitive data stored in S3.
+
+Data Versioning and Lifecycle Management:
+
+Bucket versioning is enabled on the S3 bucket to maintain multiple versions of objects, allowing for recovery from accidental deletions or overwrites.
+Lifecycle policies are implemented to automatically transition older data to cheaper storage classes, optimizing costs while ensuring data availability.
+
+Data Analysis:
+
+The cleaned dataset is queried using AWS Athena, which allows for running SQL queries directly on the data stored in S3. This enables the extraction of meaningful insights regarding usage patterns, location distribution, and data quality.
+
+Example SQL queries include:
+
+SELECT PARK_NAME, AREA_HA FROM "cov_prk_trf_system" WHERE AREA_HA > 1.0;
+
+Monitoring and Auditability:
+
+AWS CloudWatch is configured to monitor the S3 bucket and Glue jobs, providing insights into resource utilization and performance. Alarms are set up to notify stakeholders of any anomalies or threshold breaches, ensuring proactive management of the data infrastructure.
+
+2. Descriptive Statistics
+
+Calculate summary statistics for key variables, including:
+
+Total Area of Parks: Sum of all park areas to understand the total green space available.
+
+Average Park Size: Mean area of parks to gauge the typical size of recreational spaces.
+
+Number of Parks by Type: Categorize parks (e.g., community parks, pet-friendly parks) and count the number in each category.
+
+Distribution of Parks by Area Size: Create bins for park sizes (e.g., small, medium, large) and count the number of parks in each bin.
+
+Count of Parks with Pet Facilities: Identify parks that allow pets and count them.
+
+3. Data Visualization
+   
+Create visual representations to illustrate findings:
+
+Time Series Graphs: If historical data is available, show trends in park area over time.
+
+Bar Charts: Display the number of parks by type (e.g., community parks, pet-friendly parks).
+
+Pie Charts: Represent the share of parks with pet facilities versus those without.
+
+Heatmaps: Visualize park locations across the city, highlighting areas with high concentrations of parks.
+
+4. Facility Usage Analysis
+
+Analyze usage patterns of parks and recreational facilities:
+
+If available, analyze data on park usage (e.g., foot traffic, events held).
+Identify peak usage times and popular parks based on available data.
+Assess the accessibility of parks in different neighborhoods.
+
+5. Insights and Findings
+
+Summarize the insights derived from the analysis, highlighting:
+
+Areas with High Concentrations of Parks: Identify neighborhoods with a high number of parks and recreational facilities.
+
+Trends in Park Accessibility and Usage: Discuss any observed trends in how parks are accessed and used by the community.
+
+Preferences for Pet-Friendly Parks: Analyze which parks are most popular among pet owners and any trends in pet facility usage.
+
+6. Recommendations
+
+Provide actionable recommendations based on the findings to inform:
+
+Future Park Development: Suggest areas for new parks or enhancements to existing parks based on community needs.
+
+Maintenance Strategies: Recommend maintenance schedules for high-traffic parks to ensure they remain accessible and enjoyable.
+
+Targeted Marketing Campaigns: Propose marketing strategies to promote underutilized parks or recreational programs.
+
+Enhancements to Pet-Friendly Facilities: Suggest improvements to parks that cater to pet owners, such as adding more pet waste stations or dog parks.
+
+Tools and Technologies
+
+Data Analysis: Python (Pandas, Matplotlib, Seaborn) or R for data analysis.
+
+Data Visualization: Tableau or Power BI for creating interactive dashboards.
+
+Cloud Services:
+
+AWS S3 for data storage.
+
+AWS Glue for data cleaning and transformation.
+
+AWS Glue DataBrew for visual data preparation.
+
+AWS Athena for querying the dataset using SQL.
+
+AWS KMS for managing encryption keys.
+
+AWS CloudWatch for monitoring and alerting.
+
+Deliverables
+
+A detailed report summarizing the methods, findings, and recommendations.
+
+Visualizations and dashboards to present key insights clearly.
+
+A presentation for stakeholders to communicate important findings and suggestions for future action.
